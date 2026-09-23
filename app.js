@@ -56,16 +56,6 @@ document.querySelectorAll('.reveal').forEach(el => {
 document.querySelectorAll('.timeline').forEach(el => observer.observe(el));
 
 if (!reducedMotion && window.matchMedia('(pointer:fine)').matches) {
-  const dot = document.querySelector('.cursor-dot');
-  const ring = document.querySelector('.cursor-ring');
-  let mouseX = -100, mouseY = -100, ringX = -100, ringY = -100;
-  window.addEventListener('mousemove', event => { mouseX = event.clientX; mouseY = event.clientY; dot.style.left = `${mouseX}px`; dot.style.top = `${mouseY}px`; });
-  const follow = () => { ringX += (mouseX - ringX) * .14; ringY += (mouseY - ringY) * .14; ring.style.left = `${ringX}px`; ring.style.top = `${ringY}px`; requestAnimationFrame(follow); };
-  follow();
-  document.querySelectorAll('a, button, summary, .service-item, .project').forEach(el => {
-    el.addEventListener('mouseenter', () => ring.classList.add('hover'));
-    el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
-  });
   document.querySelectorAll('.magnetic').forEach(button => {
     button.addEventListener('mousemove', event => { const r = button.getBoundingClientRect(); button.style.transform = `translate(${(event.clientX-r.left-r.width/2)*.1}px,${(event.clientY-r.top-r.height/2)*.16}px)`; });
     button.addEventListener('mouseleave', () => button.style.transform = '');
@@ -107,15 +97,40 @@ form.addEventListener('submit', event => {
     invalid[0].focus();
     return;
   }
+
+  const data = new FormData(form);
+  const message = [
+    'Olá, GPV Solutions!',
+    '',
+    'Gostaria de conversar sobre um novo projeto.',
+    '',
+    `*Nome:* ${data.get('nome')}`,
+    `*Empresa:* ${data.get('empresa') || 'Não informada'}`,
+    `*E-mail:* ${data.get('email')}`,
+    `*WhatsApp:* ${data.get('whatsapp')}`,
+    `*Tipo de projeto:* ${data.get('tipo')}`,
+    '',
+    '*Mensagem:*',
+    data.get('mensagem')
+  ].join('\n');
+
+  const whatsappUrl = `https://wa.me/5531990140015?text=${encodeURIComponent(message)}`;
   form.classList.add('loading');
-  status.textContent = 'Enviando sua mensagem...';
+  status.textContent = 'Abrindo o WhatsApp...';
   status.className = 'form-status';
+
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    window.location.href = whatsappUrl;
+  } else {
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  }
+
   window.setTimeout(() => {
     form.classList.remove('loading');
-    status.textContent = 'Mensagem preparada com sucesso. Conecte o formulário ao seu serviço de envio para receber contatos reais.';
+    status.textContent = 'Mensagem preparada. Confirme o envio no WhatsApp.';
     status.className = 'form-status success';
     form.reset();
-  }, 900);
+  }, 600);
 });
 
 document.querySelector('#whatsapp').addEventListener('input', event => {

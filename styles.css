@@ -112,3 +112,5 @@ body.intro-active{overflow:hidden}
   .mobile-menu>a:not(.button){font-size:27px;padding:12px 0}
   .hero h1{font-size:38px;line-height:1.02;letter-spacing:-.05em}
 }
+
+.form-privacy{margin:-8px 0 0;color:#707076;font-size:9px;line-height:1.55}
