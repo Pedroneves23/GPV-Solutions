@@ -116,3 +116,8 @@ body.intro-active{overflow:hidden}
 }
 
 .form-privacy{margin:-8px 0 0;color:#707076;font-size:9px;line-height:1.55}
+
+@media(max-width:768px){
+  .transform-axis{display:none}
+  .transformation{gap:28px}
+}
