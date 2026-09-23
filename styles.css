@@ -83,3 +83,32 @@ body.intro-active{overflow:hidden}
 .button:hover,.button:focus-visible{background:rgba(255,16,46,.1);color:#fff;border-color:var(--red);box-shadow:0 0 24px rgba(255,16,46,.12),inset 0 0 0 1px rgba(255,16,46,.08)}
 
 .footer-nav small{color:#a8a8ad;font-size:10px;font-weight:600;letter-spacing:.16em}
+
+/* Reveal bidirecional durante a rolagem */
+.reveal{opacity:0;filter:blur(7px);transform:translateY(34px) scale(.985);transition:opacity .75s var(--ease),transform .9s var(--ease),filter .75s var(--ease)}
+.reveal.reveal-from-top{transform:translateY(-34px) scale(.985)}
+.reveal.reveal-from-bottom{transform:translateY(34px) scale(.985)}
+.reveal.visible{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
+@media(prefers-reduced-motion:reduce){.reveal,.reveal.reveal-from-top,.reveal.reveal-from-bottom,.reveal.visible{opacity:1;filter:none;transform:none}}
+
+/* Correções estruturais do menu e hero mobile */
+@media(max-width:1080px){
+  .header-inner{position:relative;z-index:102}
+  .mobile-menu{z-index:101;top:0;right:0;bottom:auto;left:0;width:100%;height:100vh;height:100dvh;min-height:100vh;min-height:100dvh;padding:112px 28px 28px;background:#060607;overflow-y:auto;overscroll-behavior:contain;visibility:hidden;opacity:0;pointer-events:none;transform:translateY(-100%);transition:transform .6s var(--ease),opacity .35s ease,visibility 0s linear .6s}
+  .mobile-menu.open{visibility:visible;opacity:1;pointer-events:auto;transform:translateY(0);transition:transform .6s var(--ease),opacity .35s ease,visibility 0s}
+  .mobile-menu>a:not(.button){position:relative;z-index:1;flex-shrink:0;font-size:clamp(25px,7vw,34px);line-height:1.1;padding:14px 0;color:#f3f3f3}
+  .mobile-menu .button{position:relative;z-index:1;flex-shrink:0;margin-top:auto}
+}
+
+@media(max-width:768px){
+  .hero{min-height:100svh;padding-top:118px}
+  .hero-copy{min-width:0;width:100%}
+  .hero h1{max-width:100%;font-size:clamp(39px,11.5vw,55px);line-height:1.01;overflow-wrap:normal}
+  .hero-lead{max-width:100%}
+}
+
+@media(max-width:390px){
+  .mobile-menu{padding:100px 16px 22px}
+  .mobile-menu>a:not(.button){font-size:27px;padding:12px 0}
+  .hero h1{font-size:38px;line-height:1.02;letter-spacing:-.05em}
+}

@@ -37,11 +37,23 @@ const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
+      return;
     }
+
+    entry.target.classList.remove('visible');
+    if (!entry.target.classList.contains('reveal')) return;
+
+    const exitedAbove = entry.boundingClientRect.bottom <= 0;
+    entry.target.classList.toggle('reveal-from-top', exitedAbove);
+    entry.target.classList.toggle('reveal-from-bottom', !exitedAbove);
   });
-}, { threshold: 0.14, rootMargin: '0px 0px -45px' });
-document.querySelectorAll('.reveal, .timeline').forEach(el => observer.observe(el));
+}, { threshold: 0.12, rootMargin: '-24px 0px -40px' });
+
+document.querySelectorAll('.reveal').forEach(el => {
+  el.classList.add('reveal-from-bottom');
+  observer.observe(el);
+});
+document.querySelectorAll('.timeline').forEach(el => observer.observe(el));
 
 if (!reducedMotion && window.matchMedia('(pointer:fine)').matches) {
   const dot = document.querySelector('.cursor-dot');
