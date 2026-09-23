@@ -98,6 +98,8 @@ body.intro-active{overflow:hidden}
   .mobile-menu.open{visibility:visible;opacity:1;pointer-events:auto;transform:translateY(0);transition:transform .6s var(--ease),opacity .35s ease,visibility 0s}
   .mobile-menu>a:not(.button){position:relative;z-index:1;flex-shrink:0;font-size:clamp(25px,7vw,34px);line-height:1.1;padding:14px 0;color:#f3f3f3}
   .mobile-menu .button{position:relative;z-index:1;flex-shrink:0;margin-top:auto}
+  .mobile-menu[aria-hidden="true"]{visibility:hidden!important;opacity:0!important;pointer-events:none!important;transform:translateY(-100%)!important}
+  .mobile-menu[aria-hidden="false"]{visibility:visible;opacity:1;pointer-events:auto;transform:translateY(0)}
 }
 
 @media(max-width:768px){
