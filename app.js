@@ -6,10 +6,20 @@ const mobileMenu = document.querySelector('.mobile-menu');
 const introLoader = document.querySelector('.intro-loader');
 if (introLoader && !reducedMotion) {
   document.body.classList.add('intro-active');
-  window.setTimeout(() => {
+  let introTimer;
+  const finishIntro = () => {
+    window.clearTimeout(introTimer);
     document.body.classList.remove('intro-active');
     introLoader.remove();
-  }, 2500);
+    window.removeEventListener('keydown', skipIntro);
+    introLoader.removeEventListener('pointerdown', finishIntro);
+  };
+  const skipIntro = event => {
+    if (event.key === 'Escape' || event.key === 'Enter' || event.key === ' ') finishIntro();
+  };
+  window.addEventListener('keydown', skipIntro);
+  introLoader.addEventListener('pointerdown', finishIntro);
+  introTimer = window.setTimeout(finishIntro, 3500);
 } else if (introLoader) {
   introLoader.remove();
 }
@@ -68,6 +78,51 @@ document.querySelectorAll('.reveal').forEach(el => {
 });
 document.querySelectorAll('.timeline').forEach(el => observer.observe(el));
 
+const projectCarousel = document.querySelector('.project-carousel');
+if (projectCarousel) {
+  const viewport = projectCarousel.querySelector('.project-viewport');
+  const track = projectCarousel.querySelector('.project-track');
+  const projects = [...projectCarousel.querySelectorAll('[data-project-slide]')];
+  const dots = projectCarousel.querySelector('.project-dots');
+  let activeProject = Math.min(1, projects.length - 1);
+
+  projects.forEach((project, index) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Exibir projeto ${index + 1}`);
+    dot.addEventListener('click', () => showProject(index));
+    dots.appendChild(dot);
+    project.addEventListener('click', event => {
+      if (!event.target.closest('a') && index !== activeProject) showProject(index);
+    });
+  });
+
+  const showProject = index => {
+    activeProject = (index + projects.length) % projects.length;
+    projects.forEach((project, projectIndex) => {
+      const isActive = projectIndex === activeProject;
+      project.classList.toggle('active', isActive);
+      project.setAttribute('aria-hidden', String(!isActive));
+      project.inert = !isActive;
+    });
+    [...dots.children].forEach((dot, dotIndex) => dot.classList.toggle('active', dotIndex === activeProject));
+
+    const active = projects[activeProject];
+    const viewportPadding = Number.parseFloat(window.getComputedStyle(viewport).paddingLeft) || 0;
+    const offset = viewport.clientWidth / 2 - viewportPadding - (active.offsetLeft + active.offsetWidth / 2);
+    track.style.transform = `translate3d(${offset}px, 0, 0)`;
+  };
+
+  projectCarousel.querySelector('.project-prev').addEventListener('click', () => showProject(activeProject - 1));
+  projectCarousel.querySelector('.project-next').addEventListener('click', () => showProject(activeProject + 1));
+  projectCarousel.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft') showProject(activeProject - 1);
+    if (event.key === 'ArrowRight') showProject(activeProject + 1);
+  });
+  window.addEventListener('resize', () => window.requestAnimationFrame(() => showProject(activeProject)));
+  window.requestAnimationFrame(() => showProject(activeProject));
+}
+
 if (!reducedMotion && window.matchMedia('(pointer:fine)').matches) {
   document.querySelectorAll('.magnetic').forEach(button => {
     button.addEventListener('mousemove', event => { const r = button.getBoundingClientRect(); button.style.transform = `translate(${(event.clientX-r.left-r.width/2)*.1}px,${(event.clientY-r.top-r.height/2)*.16}px)`; });
@@ -79,18 +134,6 @@ if (!reducedMotion && window.matchMedia('(pointer:fine)').matches) {
     visual.style.transform = `translate(${(event.clientX-innerWidth/2)*factor}px,${(event.clientY-innerHeight/2)*factor}px)`;
   });
 }
-
-const slides = document.querySelector('.testimonial-track');
-const slideItems = document.querySelectorAll('.testimonial');
-const sliderProgress = document.querySelector('.slider-progress span');
-let activeSlide = 0;
-const showSlide = index => {
-  activeSlide = (index + slideItems.length) % slideItems.length;
-  slides.style.transform = `translateX(-${activeSlide * 100}%)`;
-  sliderProgress.style.transform = `translateX(${activeSlide * 100}%)`;
-};
-document.querySelector('.slider-prev').addEventListener('click', () => showSlide(activeSlide - 1));
-document.querySelector('.slider-next').addEventListener('click', () => showSlide(activeSlide + 1));
 
 document.querySelectorAll('.accordion details').forEach(item => item.addEventListener('toggle', () => {
   if (!item.open) return;
