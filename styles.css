@@ -124,6 +124,23 @@ body.intro-active{overflow:hidden}
 .reveal.visible{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
 @media(prefers-reduced-motion:reduce){.reveal,.reveal.reveal-from-top,.reveal.reveal-from-bottom,.reveal.visible{opacity:1;filter:none;transform:none}}
 
+/* Mantém toda a composição do projeto Aurora dentro da moldura. */
+.project-aurora-card .aurora-building{right:18px;bottom:18px;width:52%;height:70%}
+
+@media(max-width:768px){
+  .project-aurora-card .project-bar{height:20px}
+  .project-aurora-card .aurora-ui{height:calc(100% - 20px);padding:10px 14px}
+  .project-aurora-card .aurora-ui nav{font-size:6px}
+  .project-aurora-card .aurora-ui small{font-size:4px;margin-top:27px}
+  .project-aurora-card .aurora-ui h3{font-size:19px;margin:6px 0}
+  .project-aurora-card .aurora-building{right:10px;bottom:9px;width:47%;height:67%;gap:3px;padding:14px}
+}
+
+@media(max-width:390px){
+  .project-aurora-card .aurora-ui small{margin-top:24px}
+  .project-aurora-card .aurora-ui h3{font-size:18px}
+}
+
 /* Correções estruturais do menu e hero mobile */
 @media(max-width:1080px){
   .header-inner{position:relative;z-index:102}

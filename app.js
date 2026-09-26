@@ -142,7 +142,18 @@ document.querySelectorAll('.accordion details').forEach(item => item.addEventLis
 
 const form = document.querySelector('.contact-form');
 const status = document.querySelector('.form-status');
-form.addEventListener('submit', event => {
+const submitButton = form.querySelector('[type="submit"]');
+const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSf8DRONQ4j1U1mt8keL3B1zpy9bxGyIFqabk0HuXT4O3WQN7w/formResponse';
+const googleFormFields = {
+  nome: 'entry.1281676468',
+  empresa: 'entry.1934653881',
+  email: 'entry.569316418',
+  whatsapp: 'entry.1914806971',
+  tipo: 'entry.1743860925',
+  mensagem: 'entry.1540573863'
+};
+
+form.addEventListener('submit', async event => {
   event.preventDefault();
   form.querySelectorAll('.field').forEach(field => field.classList.remove('invalid'));
   const invalid = [...form.querySelectorAll('[required]')].filter(input => !input.checkValidity());
@@ -155,38 +166,35 @@ form.addEventListener('submit', event => {
   }
 
   const data = new FormData(form);
-  const message = [
-    'Olá, GPV Solutions!',
-    '',
-    'Gostaria de conversar sobre um novo projeto.',
-    '',
-    `*Nome:* ${data.get('nome')}`,
-    `*Empresa:* ${data.get('empresa') || 'Não informada'}`,
-    `*E-mail:* ${data.get('email')}`,
-    `*WhatsApp:* ${data.get('whatsapp')}`,
-    `*Tipo de projeto:* ${data.get('tipo')}`,
-    '',
-    '*Mensagem:*',
-    data.get('mensagem')
-  ].join('\n');
+  const googleData = new URLSearchParams();
+  Object.entries(googleFormFields).forEach(([field, entry]) => {
+    googleData.set(entry, String(data.get(field) || ''));
+  });
 
-  const whatsappUrl = `https://wa.me/5531990140015?text=${encodeURIComponent(message)}`;
   form.classList.add('loading');
-  status.textContent = 'Abrindo o WhatsApp...';
+  form.setAttribute('aria-busy', 'true');
+  submitButton.disabled = true;
+  status.textContent = 'Enviando projeto...';
   status.className = 'form-status';
 
-  if (window.matchMedia('(pointer: coarse)').matches) {
-    window.location.href = whatsappUrl;
-  } else {
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-  }
+  try {
+    await fetch(googleFormUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: googleData
+    });
 
-  window.setTimeout(() => {
-    form.classList.remove('loading');
-    status.textContent = 'Mensagem preparada. Confirme o envio no WhatsApp.';
+    status.textContent = 'Projeto enviado com sucesso. Em breve entraremos em contato.';
     status.className = 'form-status success';
     form.reset();
-  }, 600);
+  } catch (error) {
+    status.textContent = 'Não foi possível enviar agora. Tente novamente ou fale pelo WhatsApp.';
+    status.className = 'form-status error';
+  } finally {
+    form.classList.remove('loading');
+    form.removeAttribute('aria-busy');
+    submitButton.disabled = false;
+  }
 });
 
 document.querySelector('#whatsapp').addEventListener('input', event => {
